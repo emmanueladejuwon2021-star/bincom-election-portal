@@ -1,0 +1,223 @@
+:root {
+  --primary-font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --primary-green: #198754;
+  --dark-green: #064e3b;
+  --accent-gold: #ffc107;
+}
+
+body {
+  font-family: var(--primary-font);
+  background-color: #f8fafc !important;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  border-bottom: 2px solid #157347;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.navbar-brand span {
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+/* Card Styling */
+.card {
+  border-radius: 14px;
+  border-color: #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.hover-lift {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08) !important;
+  border-color: #198754 !important;
+}
+
+/* Table Responsive Scrolling & Appearance */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0 0 14px 14px;
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.table td {
+  white-space: nowrap;
+}
+
+/* Scrollbar polish */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+/* Party Input Card */
+.party-input-card {
+  transition: all 0.2s ease;
+  border-color: #e2e8f0;
+}
+
+.party-input-card:focus-within {
+  border-color: #198754;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15);
+}
+
+/* Form inputs: at least 16px on mobile to avoid iOS Safari zoom */
+.form-control, .form-select {
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+/* Progress bar */
+.progress {
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.tracking-wide {
+  letter-spacing: 0.08em;
+}
+
+.shadow-xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* -------------------------------------------------------------
+   RESPONSIVE DESIGN BREAKPOINTS
+   ------------------------------------------------------------- */
+
+/* Small Phones (< 576px) */
+@media (max-width: 575.98px) {
+  .display-5 {
+    font-size: 1.85rem !important;
+    line-height: 1.25;
+  }
+  
+  .display-6 {
+    font-size: 1.5rem !important;
+    line-height: 1.3;
+  }
+
+  .lead {
+    font-size: 0.95rem !important;
+  }
+
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  /* Make buttons full width on small screens when stacked */
+  .btn-sm-block {
+    width: 100%;
+  }
+
+  /* Compact quick pills */
+  .quick-browse-btn {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Reduce hero padding */
+  .hero-banner {
+    padding: 1.5rem 1rem !important;
+  }
+}
+
+/* Medium Devices (Tablets, 576px to 991px) */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .display-5 {
+    font-size: 2.25rem !important;
+  }
+  
+  .display-6 {
+    font-size: 1.8rem !important;
+  }
+}
+
+/* Large Screens (Desktops 992px+) */
+@media (min-width: 992px) {
+  .hero-banner {
+    padding: 3rem !important;
+  }
+}
+
+/* -------------------------------------------------------------
+   PRINT STYLESHEET (Official Collation Document Look)
+   ------------------------------------------------------------- */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .navbar, .btn, footer, .card-header .badge, #lgaSearchInput {
+    display: none !important;
+  }
+
+  .card {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .table {
+    border: 1px solid #000000 !important;
+  }
+
+  .table th, .table td {
+    border-color: #cccccc !important;
+  }
+
+  .hero-banner {
+    background: none !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .hero-banner h1, .hero-banner p {
+    color: #000000 !important;
+  }
+}
