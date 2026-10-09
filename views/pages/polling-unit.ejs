@@ -1,0 +1,447 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main class="container my-4 flex-grow-1">
+
+  <!-- Executive Hero Banner -->
+  <div class="hero-banner p-3 p-md-5 mb-4 rounded-4 shadow-sm text-white" 
+       style="background: linear-gradient(135deg, #064e3b 0%, #047857 55%, #0d9488 100%); position: relative; overflow: hidden;">
+    
+    <!-- Watermark Icon -->
+    <div style="position: absolute; right: -25px; bottom: -30px; opacity: 0.12; pointer-events: none;">
+      <i class="bi bi-geo-alt" style="font-size: 16rem;"></i>
+    </div>
+
+    <div class="row align-items-center position-relative" style="z-index: 1;">
+      <div class="col-lg-8">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-white bg-opacity-20 text-white small fw-medium backdrop-blur">
+          <i class="bi bi-patch-check-fill text-warning"></i>
+          Grassroots Polling Verification &bull; Delta State
+        </div>
+        <h1 class="display-6 fw-extrabold mb-2 text-white">Polling Unit Results Portal</h1>
+        <p class="lead text-white text-opacity-90 mb-0" style="max-width: 620px;">
+          Search any voting location in Delta State to inspect certified ballot counts, vote share distributions, and presiding officer return records.
+        </p>
+      </div>
+
+      <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+        <a href="/new-polling-unit" class="btn btn-warning text-dark fw-bold px-4 py-2 shadow-sm">
+          <i class="bi bi-plus-circle-fill me-1"></i> Submit Unit Returns
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Location Selector Card -->
+  <div class="card border-0 shadow-sm mb-4 rounded-4 bg-white">
+    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+      <div class="rounded-3 bg-success-subtle text-success p-2 me-2 d-inline-flex">
+        <i class="bi bi-funnel-fill fs-5"></i>
+      </div>
+      <div>
+        <h5 class="fw-bold mb-0 text-dark">Find Voting Center</h5>
+        <div class="text-muted small">Filter seamlessly by Local Government, Ward, and Polling Unit</div>
+      </div>
+    </div>
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <!-- 1. Select LGA -->
+        <div class="col-md-4">
+          <label for="selectLga" class="form-label fw-bold small text-muted text-uppercase">
+            1. Local Government Area
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+            <select id="selectLga" class="form-select border-start-0 py-2">
+              <option value="">-- Choose LGA --</option>
+              <% lgas.forEach(l => { %>
+                <option value="<%= l.lga_id %>" <%= (selectedPU && selectedPU.lga_id === l.lga_id) ? 'selected' : '' %>>
+                  <%= l.lga_name %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+
+        <!-- 2. Select Ward -->
+        <div class="col-md-4">
+          <label for="selectWard" class="form-label fw-bold small text-muted text-uppercase">
+            2. Ward
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-pin-map"></i></span>
+            <select id="selectWard" class="form-select border-start-0 py-2" <%= selectedPU ? '' : 'disabled' %>>
+              <option value="">-- Choose Ward --</option>
+              <% if (selectedPU && selectedPU.ward_name) { %>
+                <option value="<%= selectedPU.ward_id %>" selected><%= selectedPU.ward_name %></option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. Select Polling Unit -->
+        <div class="col-md-4">
+          <label for="selectPu" class="form-label fw-bold small text-muted text-uppercase">
+            3. Polling Unit
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+            <select id="selectPu" class="form-select border-start-0 py-2" <%= selectedPU ? '' : 'disabled' %>>
+              <option value="">-- Choose Polling Unit --</option>
+              <% if (selectedPU) { %>
+                <option value="<%= selectedPU.uniqueid %>" selected>
+                  <%= selectedPU.polling_unit_name %> (<%= selectedPU.polling_unit_number || 'PU' %>)
+                </option>
+              <% } %>
+            </select>
+            <button id="btnViewPu" class="btn btn-success fw-semibold px-3" type="button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Browse Pills for Units with Verified Results -->
+      <div class="mt-4 pt-3 border-top">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="small fw-bold text-muted text-uppercase">
+            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Jump to Units with Verified Returns:
+          </span>
+          <span class="badge bg-light text-muted border small"><%= pusWithResults.length %> Units</span>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <% if (pusWithResults && pusWithResults.length > 0) { %>
+            <% pusWithResults.forEach(p => { %>
+              <a href="/polling-unit?id=<%= p.uniqueid %>" 
+                 class="btn btn-sm <%= (currentPuId === p.uniqueid) ? 'btn-success text-white' : 'btn-light border text-dark' %> py-1 px-2 rounded-3 hover-lift shadow-xs"
+                 style="font-size: 0.82rem;">
+                <span class="fw-bold">#<%= p.uniqueid %></span> <%= p.polling_unit_name.substring(0, 20) %> 
+                <span class="text-muted small">(<%= p.lga_name %>)</span>
+              </a>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (selectedPU) { %>
+    <!-- Unit Details Overview Banner Card -->
+    <div class="card border-0 shadow-sm bg-white mb-4 rounded-4 overflow-hidden">
+      <div class="p-4 bg-light border-bottom">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span class="badge bg-success px-3 py-1 fs-6 rounded-pill">Unit ID #<%= selectedPU.uniqueid %></span>
+              <span class="badge bg-white text-dark border px-3 py-1 rounded-pill">Code: <%= selectedPU.polling_unit_number || 'N/A' %></span>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill">
+                <i class="bi bi-building me-1"></i> LGA: <%= selectedPU.lga_name || 'Delta' %>
+              </span>
+              <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 rounded-pill">
+                <i class="bi bi-pin-map me-1"></i> Ward: <%= selectedPU.ward_name || 'Ward ' + selectedPU.ward_id %>
+              </span>
+            </div>
+            <h2 class="fw-bold text-dark mb-1"><%= selectedPU.polling_unit_name %></h2>
+            <p class="text-muted small mb-0">
+              <i class="bi bi-info-circle me-1"></i>
+              <%= selectedPU.polling_unit_description || 'Designated voting location' %>
+              <% if (selectedPU.lat && selectedPU.long) { %>
+                &bull; <i class="bi bi-geo-alt"></i> Coordinates: <%= selectedPU.lat %>, <%= selectedPU.long %>
+              <% } %>
+            </p>
+          </div>
+
+          <div class="text-lg-end">
+            <div class="p-3 bg-white rounded-4 border shadow-xs d-inline-block text-center" style="min-width: 170px;">
+              <div class="text-muted small text-uppercase fw-bold">Verified Votes</div>
+              <div class="display-6 fw-extrabold text-success mb-0">
+                <%= Number(totalVotes).toLocaleString() %>
+              </div>
+              <div class="small text-muted"><%= puResults.length %> parties contesting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit KPI Row -->
+      <% if (puResults && puResults.length > 0) { 
+        const leadingParty = puResults[0];
+        const leadingPct = totalVotes > 0 ? ((leadingParty.party_score / totalVotes) * 100).toFixed(1) : 0;
+      %>
+        <div class="p-3 bg-white">
+          <div class="row g-2 text-center">
+            <div class="col-4 border-end">
+              <div class="text-muted small">Leading Party</div>
+              <div class="fw-bold fs-5 text-warning">
+                <i class="bi bi-crown-fill me-1"></i> <%= leadingParty.party_abbreviation %>
+              </div>
+            </div>
+            <div class="col-4 border-end">
+              <div class="text-muted small">Winning Share</div>
+              <div class="fw-bold fs-5 text-dark"><%= leadingPct %>%</div>
+            </div>
+            <div class="col-4">
+              <div class="text-muted small">Presiding Official</div>
+              <div class="fw-bold fs-5 text-dark"><%= leadingParty.entered_by_user || 'Certified Official' %></div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <% if (puResults && puResults.length > 0) { %>
+      <!-- Results Table and Chart -->
+      <div class="row g-4">
+        <!-- Results Table Column -->
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fw-bold mb-0 text-dark">
+                  <i class="bi bi-card-checklist text-success me-2"></i> Certified Party Scores
+                </h5>
+                <div class="text-muted small">Official presiding officer ballot tally</div>
+              </div>
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
+                <%= puResults.length %> Contesting Parties
+              </span>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col" class="ps-4">Contesting Party</th>
+                      <th scope="col">Votes Counted</th>
+                      <th scope="col" style="width: 35%;">Vote Share (%)</th>
+                      <th scope="col" class="text-end pe-4">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% puResults.forEach((r, idx) => { 
+                      const pct = totalVotes > 0 ? ((r.party_score / totalVotes) * 100).toFixed(1) : 0;
+                    %>
+                      <tr class="<%= idx === 0 ? 'table-success-subtle' : '' %>">
+                        <td class="ps-4">
+                          <span class="badge <%= idx === 0 ? 'bg-success' : 'bg-dark' %> px-3 py-2 fs-6 rounded-3">
+                            <%= r.party_abbreviation %>
+                          </span>
+                        </td>
+                        <td class="fw-bold fs-5 text-dark">
+                          <%= Number(r.party_score).toLocaleString() %>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="me-2 small fw-bold" style="min-width: 48px;"><%= pct %>%</span>
+                            <div class="progress flex-grow-1" style="height: 10px;">
+                              <div class="progress-bar <%= idx === 0 ? 'bg-success' : 'bg-primary' %>" 
+                                   role="progressbar" 
+                                   style="width: <%= pct %>%;" 
+                                   aria-valuenow="<%= pct %>" 
+                                   aria-valuemin="0" 
+                                   aria-valuemax="100">
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-end pe-4">
+                          <% if (idx === 0) { %>
+                            <span class="badge bg-warning text-dark px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i> Winner</span>
+                          <% } else { %>
+                            <span class="small text-muted">Contested</span>
+                          <% } %>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                  <tfoot class="table-light">
+                    <tr class="fw-bold">
+                      <td class="ps-4">TOTAL VOTES RECORDED</td>
+                      <td class="text-success fs-5"><%= Number(totalVotes).toLocaleString() %></td>
+                      <td>100.0%</td>
+                      <td class="text-end pe-4"><span class="badge bg-success">Certified</span></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart Column -->
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+            <div class="card-header bg-white py-3 border-bottom">
+              <h5 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-pie-chart-fill text-primary me-2"></i>
+                Visual Distribution Breakdown
+              </h5>
+              <div class="text-muted small">Party proportions for this voting center</div>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+              <canvas id="puResultsChart" style="max-height: 330px; width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+      <!-- Clean Empty State for Unit Without Results -->
+      <div class="card border-0 shadow-sm bg-white p-5 text-center rounded-4">
+        <div class="py-4">
+          <div class="rounded-circle bg-light p-4 d-inline-flex mb-3 text-muted">
+            <i class="bi bi-clipboard-x fs-1"></i>
+          </div>
+          <h4 class="fw-bold text-dark">No Certified Returns on File</h4>
+          <p class="text-muted mx-auto mb-4" style="max-width: 460px;">
+            This voting unit is officially registered, but ballot sheets have not been submitted to the portal yet.
+          </p>
+          <a href="/new-polling-unit" class="btn btn-warning text-dark fw-bold px-4 py-2 shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Submit Returns For This Unit
+          </a>
+        </div>
+      </div>
+    <% } %>
+
+  <% } else { %>
+    <div class="alert alert-info shadow-sm p-4 text-center rounded-4 border-0">
+      <i class="bi bi-info-circle fs-3 d-block mb-2 text-info"></i>
+      <h5 class="fw-bold">Please Select a Polling Unit Above</h5>
+      <p class="mb-0 text-muted">Pick a Local Government Area, then choose a Ward, and select the polling unit to view certified returns.</p>
+    </div>
+  <% } %>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lgaSelect = document.getElementById('selectLga');
+    const wardSelect = document.getElementById('selectWard');
+    const puSelect = document.getElementById('selectPu');
+    const viewBtn = document.getElementById('btnViewPu');
+
+    // When LGA changes -> load wards
+    lgaSelect.addEventListener('change', async function() {
+      const lgaId = this.value;
+      wardSelect.innerHTML = '<option value="">-- Choose Ward --</option>';
+      puSelect.innerHTML = '<option value="">-- Choose Polling Unit --</option>';
+      puSelect.disabled = true;
+
+      if (!lgaId) {
+        wardSelect.disabled = true;
+        return;
+      }
+
+      wardSelect.disabled = false;
+      try {
+        const res = await fetch(`/api/wards?lga_id=${lgaId}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          data.data.forEach(w => {
+            const opt = document.createElement('option');
+            opt.value = w.ward_id;
+            opt.textContent = w.ward_name;
+            wardSelect.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error('Error loading wards:', err);
+      }
+    });
+
+    // When Ward changes -> load polling units
+    wardSelect.addEventListener('change', async function() {
+      const wardId = this.value;
+      const lgaId = lgaSelect.value;
+      puSelect.innerHTML = '<option value="">-- Choose Polling Unit --</option>';
+
+      if (!wardId) {
+        puSelect.disabled = true;
+        return;
+      }
+
+      puSelect.disabled = false;
+      try {
+        const res = await fetch(`/api/polling-units?lga_id=${lgaId}&ward_id=${wardId}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          if (data.data.length === 0) {
+            puSelect.innerHTML = '<option value="">No polling units found in this ward</option>';
+          } else {
+            data.data.forEach(pu => {
+              const opt = document.createElement('option');
+              opt.value = pu.uniqueid;
+              const hasResults = pu.results_count > 0 ? ' [Returns Verified]' : '';
+              opt.textContent = `${pu.polling_unit_name} (${pu.polling_unit_number || 'PU'})${hasResults}`;
+              puSelect.appendChild(opt);
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Error loading polling units:', err);
+      }
+    });
+
+    // View button click
+    viewBtn.addEventListener('click', function() {
+      const puId = puSelect.value;
+      if (puId) {
+        window.location.href = `/polling-unit?id=${puId}`;
+      } else {
+        alert('Please select a Polling Unit first.');
+      }
+    });
+
+    // Auto-navigate on PU select change
+    puSelect.addEventListener('change', function() {
+      if (this.value) {
+        window.location.href = `/polling-unit?id=${this.value}`;
+      }
+    });
+
+    // Render Chart if results exist
+    <% if (selectedPU && puResults && puResults.length > 0) { %>
+      const chartCtx = document.getElementById('puResultsChart').getContext('2d');
+      const labels = <%- JSON.stringify(puResults.map(r => r.party_abbreviation)) %>;
+      const votes = <%- JSON.stringify(puResults.map(r => r.party_score)) %>;
+
+      const palette = [
+        '#198754', '#0d6efd', '#ffc107', '#dc3545', '#6f42c1', 
+        '#fd7e14', '#20c997', '#0dcaf0', '#6c757d'
+      ];
+
+      new Chart(chartCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Votes',
+            data: votes,
+            backgroundColor: palette.slice(0, labels.length),
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.parsed.y.toLocaleString()} votes`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+    <% } %>
+  });
+</script>
+
+<%- include('../partials/footer') %>
