@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+      <i class="bi bi-box-seam-fill me-2 fs-4 text-warning"></i>
+      <span>Delta State Election Portal</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item">
+          <a class="nav-link <%= currentPage === 'home' ? 'active fw-bold' : '' %>" href="/">
+            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= currentPage === 'polling-unit' ? 'active fw-bold' : '' %>" href="/polling-unit">
+            <i class="bi bi-geo-alt-fill me-1"></i> Polling Unit Results
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= currentPage === 'lga-total' ? 'active fw-bold' : '' %>" href="/lga-total">
+            <i class="bi bi-building-fill me-1"></i> LGA Totals
+          </a>
+        </li>
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+          <a class="btn btn-warning text-dark fw-semibold btn-sm px-3 shadow-sm" href="/new-polling-unit">
+            <i class="bi bi-plus-circle-fill me-1"></i> Enter New Results
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
