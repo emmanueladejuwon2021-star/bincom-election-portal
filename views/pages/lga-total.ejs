@@ -1,0 +1,381 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main class="container my-4 flex-grow-1">
+
+  <!-- Executive Hero Banner -->
+  <div class="hero-banner p-3 p-md-5 mb-4 rounded-4 shadow-sm text-white" 
+       style="background: linear-gradient(135deg, #064e3b 0%, #047857 55%, #0d9488 100%); position: relative; overflow: hidden;">
+    
+    <!-- Watermark Icon -->
+    <div style="position: absolute; right: -25px; bottom: -30px; opacity: 0.12; pointer-events: none;">
+      <i class="bi bi-building" style="font-size: 16rem;"></i>
+    </div>
+
+    <div class="row align-items-center position-relative" style="z-index: 1;">
+      <div class="col-lg-8">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-white bg-opacity-20 text-white small fw-medium backdrop-blur">
+          <i class="bi bi-diagram-3-fill text-warning"></i>
+          Council Collation & Reconciliation &bull; Delta State
+        </div>
+        <h1 class="display-6 fw-extrabold mb-2 text-white">Local Government Collation Summary</h1>
+        <p class="lead text-white text-opacity-90 mb-0" style="max-width: 620px;">
+          Certified aggregated ballot totals computed directly from all voting centers within each Local Government Area.
+        </p>
+      </div>
+
+      <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+        <button onclick="window.print()" class="btn btn-warning text-dark fw-bold px-4 py-2 shadow-sm">
+          <i class="bi bi-printer-fill me-1"></i> Print Collation Sheet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LGA Selection Floating Card -->
+  <div class="card border-0 shadow-sm mb-4 rounded-4 bg-white">
+    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="rounded-3 bg-success-subtle text-success p-2 me-2 d-inline-flex">
+          <i class="bi bi-building fs-5"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">Select Local Government Area</h5>
+          <div class="text-muted small">Choose any of the 25 council areas in Delta State</div>
+        </div>
+      </div>
+      <span class="badge bg-light text-muted border px-3 py-1 rounded-pill">25 LGAs Covered</span>
+    </div>
+    <div class="card-body p-4">
+      <form action="/lga-total" method="GET" class="row g-3 align-items-center">
+        <div class="col-md-8 col-lg-7">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+            <select id="lgaSelect" name="lga_id" class="form-select form-select-lg border-start-0 py-2" onchange="this.form.submit()">
+              <% lgas.forEach(l => { %>
+                <option value="<%= l.lga_id %>" <%= (selectedLgaId === l.lga_id) ? 'selected' : '' %>>
+                  <%= l.lga_name %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-xs">
+            <i class="bi bi-arrow-repeat me-1"></i> Load Summary
+          </button>
+        </div>
+      </form>
+
+      <!-- Quick Browse Bar for High-Activity LGAs -->
+      <div class="mt-4 pt-3 border-top">
+        <div class="small fw-bold text-muted text-uppercase mb-2">
+          <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Browse LGAs:
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <% lgas.slice(0, 10).forEach(l => { %>
+            <a href="/lga-total?lga_id=<%= l.lga_id %>" 
+               class="btn btn-sm <%= (selectedLgaId === l.lga_id) ? 'btn-success text-white' : 'btn-light border text-dark' %> py-1 px-3 rounded-3 hover-lift shadow-xs"
+               style="font-size: 0.84rem;">
+              <%= l.lga_name %>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (selectedLga) { %>
+    <!-- LGA KPI Summary Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm bg-white rounded-4 h-100 p-2">
+          <div class="card-body">
+            <div class="text-muted small fw-medium text-uppercase">Local Government</div>
+            <div class="fs-4 fw-extrabold text-dark mb-1"><%= selectedLga.lga_name %></div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+              Delta State Official Council
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm bg-white rounded-4 h-100 p-2">
+          <div class="card-body">
+            <div class="text-muted small fw-medium text-uppercase">Total Grassroots Ballots</div>
+            <div class="fs-4 fw-extrabold text-success mb-1"><%= Number(totalPuVotes).toLocaleString() %></div>
+            <div class="small text-muted">Summed from field polling units</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm bg-white rounded-4 h-100 p-2">
+          <div class="card-body">
+            <div class="text-muted small fw-medium text-uppercase">Reporting Centers</div>
+            <div class="fs-4 fw-extrabold text-primary mb-1"><%= reportingPUs %> / <%= totalPUs %></div>
+            <div class="d-flex align-items-center">
+              <span class="small text-muted me-2"><%= totalPUs > 0 ? ((reportingPUs / totalPUs) * 100).toFixed(0) : 0 %>% reporting</span>
+              <div class="progress flex-grow-1" style="height: 6px;">
+                <div class="progress-bar bg-primary" 
+                     role="progressbar" 
+                     style="width: <%= totalPUs > 0 ? ((reportingPUs / totalPUs) * 100) : 0 %>%;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm bg-white rounded-4 h-100 p-2">
+          <div class="card-body">
+            <div class="text-muted small fw-medium text-uppercase">Council Leading Party</div>
+            <div class="fs-4 fw-extrabold text-warning mb-1">
+              <i class="bi bi-crown-fill me-1"></i>
+              <%= (summedResults && summedResults.length > 0) ? summedResults[0].party_abbreviation : 'N/A' %>
+            </div>
+            <div class="small text-muted">
+              <%= (summedResults && summedResults.length > 0) ? Number(summedResults[0].total_score).toLocaleString() + ' votes' : 'Pending returns' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aggregated Ballot Table and Visual Doughnut Chart -->
+    <div class="row g-4 mb-4">
+      <!-- Summed Table Column -->
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+          <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-check-all text-success me-2"></i>
+                Aggregated Grassroots Returns
+              </h5>
+              <div class="text-muted small">Summed directly from polling units in <%= selectedLga.lga_name %></div>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
+              <%= summedResults.length %> Parties
+            </span>
+          </div>
+          <div class="card-body p-0">
+            <% if (summedResults && summedResults.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col" class="ps-4">Contesting Party</th>
+                      <th scope="col">Aggregated Score</th>
+                      <th scope="col" style="width: 35%;">Vote Share (%)</th>
+                      <th scope="col" class="text-end pe-4">Reporting Centers</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% summedResults.forEach((r, idx) => { 
+                      const pct = totalPuVotes > 0 ? ((r.total_score / totalPuVotes) * 100).toFixed(1) : 0;
+                    %>
+                      <tr class="<%= idx === 0 ? 'table-success-subtle' : '' %>">
+                        <td class="ps-4">
+                          <span class="badge <%= idx === 0 ? 'bg-success' : 'bg-dark' %> px-3 py-2 fs-6 rounded-3">
+                            <%= r.party_abbreviation %>
+                          </span>
+                        </td>
+                        <td class="fw-bold fs-5 text-dark">
+                          <%= Number(r.total_score).toLocaleString() %>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="me-2 small fw-bold" style="min-width: 48px;"><%= pct %>%</span>
+                            <div class="progress flex-grow-1" style="height: 10px;">
+                              <div class="progress-bar <%= idx === 0 ? 'bg-success' : 'bg-primary' %>" 
+                                   role="progressbar" 
+                                   style="width: <%= pct %>%;" 
+                                   aria-valuenow="<%= pct %>" 
+                                   aria-valuemin="0" 
+                                   aria-valuemax="100">
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-end pe-4 text-muted small">
+                          <%= r.reporting_pus %> Units
+                        </td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                  <tfoot class="table-light">
+                    <tr class="fw-bold">
+                      <td class="ps-4">COUNCIL GRAND TOTAL</td>
+                      <td class="text-success fs-5"><%= Number(totalPuVotes).toLocaleString() %></td>
+                      <td>100.0%</td>
+                      <td class="text-end pe-4"><%= reportingPUs %> Units Included</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            <% } else { %>
+              <div class="p-5 text-center text-muted">
+                <div class="rounded-circle bg-light p-4 d-inline-flex mb-3 text-muted">
+                  <i class="bi bi-inbox fs-1"></i>
+                </div>
+                <h5 class="fw-bold text-dark">No Polling Unit Returns Submitted Yet</h5>
+                <p class="small text-muted mb-3 mx-auto" style="max-width: 420px;">
+                  Voting units under <%= selectedLga.lga_name %> have not submitted certified ballot counts to the portal.
+                </p>
+                <a href="/new-polling-unit" class="btn btn-warning text-dark fw-bold px-4 py-2 shadow-xs">
+                  <i class="bi bi-plus-circle me-1"></i> Submit Returns For This LGA
+                </a>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Doughnut Chart Column -->
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="fw-bold mb-0 text-dark">
+              <i class="bi bi-pie-chart-fill text-primary me-2"></i>
+              Council Vote Share Breakdown
+            </h5>
+            <div class="text-muted small">Visual distribution across contesting parties</div>
+          </div>
+          <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+            <% if (summedResults && summedResults.length > 0) { %>
+              <canvas id="lgaSummedChart" style="max-height: 330px; width: 100%;"></canvas>
+            <% } else { %>
+              <div class="text-muted text-center py-5">
+                <i class="bi bi-pie-chart text-muted fs-1 d-block mb-2"></i>
+                Chart will appear when returns are submitted.
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collation Reconciliation & Audit Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
+      <div class="card-header bg-white py-3 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-clipboard-check-fill text-success me-2"></i>
+            Collation Reconciliation & Cross-Audit
+          </h5>
+          <div class="text-muted small">
+            Independent verification comparing grassroots polling unit sums against collation centre announcements
+          </div>
+        </div>
+        <span class="badge bg-light text-muted border px-3 py-1 rounded-pill">Integrity Audit</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="ps-4">Contesting Party</th>
+                <th scope="col">Grassroots PU Sum</th>
+                <th scope="col">Collation Centre Announcement</th>
+                <th scope="col">Variance / Difference</th>
+                <th scope="col" class="text-end pe-4">Reconciliation Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (comparison && comparison.length > 0) { %>
+                <% comparison.forEach(c => { %>
+                  <tr>
+                    <td class="ps-4">
+                      <span class="badge bg-dark px-2 py-1"><%= c.party %></span>
+                      <span class="small text-muted ms-1"><%= c.partyName %></span>
+                    </td>
+                    <td class="fw-bold text-success fs-6">
+                      <%= Number(c.puScore).toLocaleString() %>
+                    </td>
+                    <td class="fw-bold text-primary fs-6">
+                      <%= Number(c.announcedScore).toLocaleString() %>
+                    </td>
+                    <td class="fw-bold <%= c.difference === 0 ? 'text-muted' : (c.difference > 0 ? 'text-success' : 'text-danger') %>">
+                      <%= c.difference > 0 ? '+' : '' %><%= Number(c.difference).toLocaleString() %>
+                    </td>
+                    <td class="text-end pe-4">
+                      <% if (c.difference === 0 && (c.puScore > 0 || c.announcedScore > 0)) { %>
+                        <span class="badge bg-success px-3 py-1 rounded-pill">Reconciled</span>
+                      <% } else if (c.puScore === 0 && c.announcedScore === 0) { %>
+                        <span class="badge bg-light text-muted border px-3 py-1 rounded-pill">Pending</span>
+                      <% } else { %>
+                        <span class="badge bg-warning text-dark px-3 py-1 rounded-pill">Variance Detected</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">No comparison records found for this LGA.</td>
+                </tr>
+              <% } %>
+            </tbody>
+            <tfoot class="table-light">
+              <tr class="fw-bold">
+                <td class="ps-4">AUDIT TOTALS</td>
+                <td class="text-success fs-6"><%= Number(totalPuVotes).toLocaleString() %></td>
+                <td class="text-primary fs-6"><%= Number(totalAnnouncedVotes).toLocaleString() %></td>
+                <td class="<%= (totalPuVotes - totalAnnouncedVotes) === 0 ? 'text-muted' : 'text-danger' %>">
+                  <%= (totalPuVotes - totalAnnouncedVotes) > 0 ? '+' : '' %><%= Number(totalPuVotes - totalAnnouncedVotes).toLocaleString() %>
+                </td>
+                <td class="text-end pe-4">Audit Complete</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</main>
+
+<% if (summedResults && summedResults.length > 0) { %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const chartCtx = document.getElementById('lgaSummedChart').getContext('2d');
+    const labels = <%- JSON.stringify(summedResults.map(r => r.party_abbreviation)) %>;
+    const scores = <%- JSON.stringify(summedResults.map(r => r.total_score)) %>;
+
+    const colors = [
+      '#198754', '#0d6efd', '#ffc107', '#dc3545', '#6f42c1', 
+      '#fd7e14', '#20c997', '#0dcaf0', '#6c757d'
+    ];
+
+    new Chart(chartCtx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: scores,
+          backgroundColor: colors.slice(0, labels.length),
+          borderWidth: 2,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return ` ${context.label}: ${context.raw.toLocaleString()} votes`;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+<% } %>
+
+<%- include('../partials/footer') %>
