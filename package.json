@@ -1,0 +1,26 @@
+{
+  "name": "delta-state-election-portal",
+  "version": "1.0.0",
+  "description": "Delta State Election Results and Collation Portal built with Node.js and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "setup-db": "node scripts/init-db.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "election",
+    "delta-state",
+    "collation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.22.3",
+    "mysql2": "^3.24.5",
+    "sql.js": "^1.14.2"
+  }
+}
