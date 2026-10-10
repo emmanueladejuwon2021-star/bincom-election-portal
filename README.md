@@ -1,97 +1,94 @@
-# Delta State Election Collation & Results Portal
+# Delta State Election Results Portal
 
-A web application developed with **Node.js**, **Express.js**, **EJS**, and **Bootstrap 5** for real-time querying, council-level collation aggregation, and presiding officer ballot returns across Delta State.
-
----
-
-## 📌 Features
-
-### 1. Polling Unit Results Explorer (`/polling-unit`)
-- **Chained Dropdown Filters:** Fast, asynchronous cascading dropdowns (`Local Government` &rarr; `Ward` &rarr; `Polling Unit`) powered by dedicated REST API endpoints (`/api/lgas`, `/api/wards`, `/api/polling-units`).
-- **Complete Ballot Returns:** Displays detailed unit metadata (Unit Number, Landmark Description, Coordinates, Presiding Officer), individual scores for all contesting political parties, and vote share percentages.
-- **Visual Analytics:** Interactive Chart.js bar distribution breakdown.
-- **Quick Browse:** One-click shortcut pills for voting centers with verified returns.
-
-### 2. Local Government Collation Summary (`/lga-total`)
-- **Grassroots Aggregation:** Computes total party votes directly by summing certified ballots from all reporting polling units within the selected LGA:
-  ```sql
-  SELECT 
-    r.party_abbreviation, 
-    SUM(r.party_score) AS total_score 
-  FROM announced_pu_results r 
-  JOIN polling_unit pu ON CAST(r.polling_unit_uniqueid AS INTEGER) = pu.uniqueid 
-  WHERE pu.lga_id = ? 
-  GROUP BY r.party_abbreviation 
-  ORDER BY total_score DESC
-  ```
-- **Council Overview:** Displays reporting rates, total ballots counted, and council leaders with doughnut chart visualization.
-- **Collation Reconciliation & Cross-Audit:** Side-by-side verification comparing grassroots polling unit sums against collation centre announcements with discrepancy calculation and reconciliation status indicators.
-
-### 3. Presiding Officer Returns Submission (`/new-polling-unit`)
-- **Unit Registration:** Dynamic chained LGA and Ward selection, location naming, code generation, and landmark descriptions.
-- **Dynamic Party Inputs:** Dynamically pulls all registered political parties from the database (`PDP`, `DPP`, `ACN`, `PPA`, `CDC`, `JP`, `ANPP`, `LABOUR`, `CPP`).
-- **Live Ballot Counter:** Real-time client-side calculation updating total votes cast as individual party scores are typed.
-- **Reliable Data Persistence:** Transactional insertion into the polling unit registry and party results records with automatic database persistence.
+A clean and user-friendly web portal built with Node.js and Express to view, calculate, and submit election results across Delta State.
 
 ---
 
-## 🛠️ Technology Stack
-- **Backend:** Node.js, Express.js
-- **Frontend / Templating:** EJS, Bootstrap 5, Bootstrap Icons, Google Fonts (Inter)
-- **Data Visualization:** Chart.js
-- **Database:** SQLite (`sql.js`) pre-populated from `bincom_test.sql` (self-contained, zero-configuration portability for local runs and cloud deployments)
+## What This Website Does
+
+### 1. View Results for Any Polling Unit (`/polling-unit`)
+* **Step-by-Step Search:** Pick a Local Government Area, pick a Ward, and select a Polling Unit. The options update automatically so you find the exact voting center easily.
+* **Clear Results Display:** Shows the voting location name, unit number, landmark description, and the presiding officer in charge.
+* **Party Breakdown:** Shows how many votes each political party received, along with their percentage share of the total vote.
+* **Visual Charts:** Displays a colorful bar chart showing the performance of each party at a glance.
+* **Quick Shortcuts:** Helpful buttons let you jump straight to active voting centers in one click.
+
+### 2. View Total Results for Any Local Government (`/lga-total`)
+* **Accurate Vote Sums:** Directly calculates total votes by adding up results from all reporting polling units in the selected Local Government Area.
+* **Clear Council Summary:** Displays total votes cast, how many voting centers have reported so far, and the leading party.
+* **Audit and Comparison Table:** Compares the calculated polling unit total against the announced local government result side-by-side, making it easy to spot any differences.
+* **Print Friendly:** Includes a simple button to print a clean paper copy of the results sheet.
+
+### 3. Enter New Results for a Polling Unit (`/new-polling-unit`)
+* **Simple Form:** Fill in the Local Government, Ward, polling unit name, and landmark description.
+* **All Parties Included:** Provides input boxes for all registered political parties (PDP, DPP, ACN, PPA, CDC, JP, ANPP, LABOUR, CPP).
+* **Live Vote Counter:** Automatically adds up the total number of votes on the screen as you type in scores.
+* **Safe Saving:** Stores the new polling unit and all party scores directly into the database.
+
+### 4. Day and Night Mode (Light / Dark Theme)
+* Easily switch between light mode and dark mode using the sun/moon button in the top navigation bar.
+* The website remembers your choice the next time you visit.
+* Designed for high contrast and clear readability on all phone, tablet, and computer screens.
 
 ---
 
-## 🚀 Getting Started Locally
+## Tools and Technologies Used
+* **Server:** Node.js, Express.js
+* **Page Templates:** EJS (HTML templates)
+* **Styling and Design:** Bootstrap 5, Bootstrap Icons, Custom CSS
+* **Charts:** Chart.js
+* **Database:** SQLite with sql.js (comes pre-loaded with Delta State election data so it runs instantly without any extra database setup)
 
-1. **Install dependencies:**
+---
+
+## How to Run It on Your Computer
+
+1. **Install required packages:**
    ```bash
    npm install
    ```
 
-2. **Start the application:**
+2. **Start the website:**
    ```bash
    npm start
    ```
 
-3. **Access in browser:**
+3. **Open in your web browser:**
    ```
    http://localhost:3000
    ```
 
 ---
 
-## 🌐 Cloud Deployment (Render.com)
+## How to Host on the Web (Render.com)
 
-1. Push this repository to GitHub.
-2. Sign in to [Render.com](https://render.com) and create a **New Web Service**.
-3. Select your repository.
-4. Set the following build and start commands:
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
-5. Click **Deploy**. Your application will be live in ~60 seconds.
+1. Put your code on GitHub.
+2. Go to [Render.com](https://render.com) and click **New +** > **Web Service**.
+3. Connect your GitHub repository.
+4. Set the following commands:
+   * **Build Command:** `npm install`
+   * **Start Command:** `npm start`
+5. Click **Deploy Web Service**. Your live website link will be ready in about a minute.
 
 ---
 
-## 📂 Project Structure
+## Project Files
 ```
-├── server.js              # Express application entrypoint
-├── package.json           # Dependencies and scripts
-├── database.sqlite        # Embedded database
-├── bincom_test.sql        # Source SQL database schema and dump
+├── server.js              # Starts the web server
+├── package.json           # Project settings and dependencies
+├── database.sqlite        # Ready-to-use database with Delta State records
+├── bincom_test.sql        # Original database records file
 ├── db/
-│   └── index.js           # Database connection and persistence layer
+│   └── index.js           # Database helper functions
 ├── routes/
-│   ├── index.js           # Web view routes
-│   └── api.js             # REST API endpoints for cascading dropdowns
+│   ├── index.js           # Web page routes (Dashboard, Polling Unit, LGA, New Unit)
+│   └── api.js             # Fast data helpers for the dropdown filters
 ├── views/
-│   ├── partials/          # Header, Navbar, and Footer partials
-│   ├── pages/             # Home, Polling Unit, LGA Totals, and Entry pages
-│   └── error.ejs          # Error handling view
+│   ├── partials/          # Reusable header, navigation bar, and footer
+│   ├── pages/             # Main web pages (Home, Polling Unit, LGA Total, Entry Form)
+│   └── error.ejs          # Friendly error message page
 ├── public/
-│   └── css/custom.css     # Responsive design and print stylesheet
+│   └── css/custom.css     # Mobile-friendly styling and dark mode rules
 └── scripts/
-    ├── init-db.js         # Database bootstrap utility
-    └── push-to-github.js  # Direct GitHub repository uploader
+    └── init-db.js         # Setup script to prepare the database if needed
 ```
