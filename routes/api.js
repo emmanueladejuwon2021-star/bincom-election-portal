@@ -249,4 +249,42 @@ router.get('/parties', async (req, res) => {
   }
 });
 
+// GET /api/search-polling-units - Fast instant autocomplete search across all polling units
+router.get('/search-polling-units', async (req, res) => {
+  try {
+    const q = req.query.q ? req.query.q.trim() : '';
+    if (!q || q.length < 1) {
+      return res.json({ success: true, data: [] });
+    }
+
+    const term = `%${q}%`;
+    const results = await db.query(
+      `SELECT 
+        pu.uniqueid,
+        pu.polling_unit_name,
+        pu.polling_unit_number,
+        pu.polling_unit_description,
+        l.lga_name,
+        w.ward_name,
+        (SELECT COUNT(*) FROM announced_pu_results r WHERE CAST(r.polling_unit_uniqueid AS INTEGER) = pu.uniqueid) as has_results
+      FROM polling_unit pu
+      LEFT JOIN lga l ON pu.lga_id = l.lga_id
+      LEFT JOIN ward w ON pu.ward_id = w.ward_id
+      WHERE pu.polling_unit_name LIKE ? 
+         OR pu.polling_unit_number LIKE ? 
+         OR pu.polling_unit_description LIKE ?
+         OR l.lga_name LIKE ?
+         OR CAST(pu.uniqueid AS TEXT) = ?
+      ORDER BY has_results DESC, pu.polling_unit_name ASC
+      LIMIT 12`,
+      [term, term, term, term, q]
+    );
+
+    res.json({ success: true, data: results });
+  } catch (err) {
+    console.error('Error searching polling units:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
