@@ -1,5 +1,7 @@
 # Delta State Election Results Portal
 
+> **Live Demo:** [https://bincom-election-portal.onrender.com](https://bincom-election-portal.onrender.com)
+
 A clean and user-friendly web portal built with Node.js and Express to view, calculate, and submit election results across Delta State.
 
 ---
@@ -63,15 +65,12 @@ A clean and user-friendly web portal built with Node.js and Express to view, cal
 
 ---
 
-## How to Host on the Web (Render.com)
+## Live Demo and Deployment
 
-1. Put your code on GitHub.
-2. Go to [Render.com](https://render.com) and click **New +** > **Web Service**.
-3. Connect your GitHub repository.
-4. Set the following commands:
-   * **Build Command:** `npm install`
-   * **Start Command:** `npm start`
-5. Click **Deploy Web Service**. Your live website link will be ready in about a minute.
+* **Live Web Application:** [https://bincom-election-portal.onrender.com](https://bincom-election-portal.onrender.com)
+* **Hosting Platform:** Render (Node.js Web Service)
+* **Automated Deployment:** Connected directly to GitHub. Any changes pushed to the `main` branch build and deploy automatically with zero downtime.
+* **Security:** Enforced HTTPS with automated SSL/TLS certificates.
 
 ---
 
