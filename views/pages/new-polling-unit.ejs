@@ -122,7 +122,7 @@
               <div class="input-group input-group-sm">
                 <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-hash"></i></span>
                 <input type="text" class="form-control border-start-0 py-1 py-sm-2" id="puNumber" name="polling_unit_number" 
-                       placeholder="e.g. DT1708099 (Leave blank to generate)">
+                       placeholder="e.g. DT1708099 (Leave blank to generate automatically)">
               </div>
             </div>
 
@@ -150,7 +150,7 @@
             <!-- Presiding Officer -->
             <div class="mb-2">
               <label for="enteredBy" class="form-label fw-bold small text-muted text-uppercase mb-1" style="font-size: 0.72rem;">
-                Presiding Officer Designation
+                Official Role (e.g. Presiding Officer)
               </label>
               <div class="input-group input-group-sm">
                 <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-badge"></i></span>
@@ -159,13 +159,13 @@
               </div>
             </div>
 
-            <!-- Optional: Accredited Polling Agent (Schema Table: agentname) -->
+            <!-- Optional: Accredited Polling Agent -->
             <div class="mt-2 pt-2 border-top">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="fw-bold small text-muted text-uppercase" style="font-size: 0.7rem;">
-                  Accredited Agent Details (Optional)
+                  Party Representative Contact (Optional)
                 </span>
-                <span class="badge bg-light text-muted border" style="font-size: 0.65rem;">agentname table</span>
+                <span class="badge bg-light text-muted border" style="font-size: 0.65rem;">Party Representative</span>
               </div>
               <div class="row g-1 mb-1">
                 <div class="col-6">
@@ -237,8 +237,8 @@
             <div class="p-2 p-sm-3 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 mb-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <div class="text-success fw-bold text-uppercase small" style="font-size: 0.72rem;">Total Ballots Counted</div>
-                  <div class="small text-muted" style="font-size: 0.7rem;">Calculated in real-time across <%= parties.length %> parties</div>
+                  <div class="text-success fw-bold text-uppercase small" style="font-size: 0.72rem;">Total Votes Counted</div>
+                  <div class="small text-muted" style="font-size: 0.7rem;">Calculated automatically across all <%= parties.length %> parties</div>
                 </div>
                 <div class="text-end">
                   <div class="fs-4 fw-extrabold text-success mb-0" id="liveTotalVotes">0</div>
@@ -250,7 +250,7 @@
             <!-- Action Submit Buttons -->
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-success fw-bold py-2 shadow-sm" id="btnSubmitPu">
-                <i class="bi bi-check-circle-fill me-1"></i> Certify & Save Polling Unit Results
+                <i class="bi bi-check-circle-fill me-1"></i> Save and Record Results
               </button>
               <a href="/polling-unit" class="btn btn-outline-secondary btn-sm py-1">
                 Cancel
