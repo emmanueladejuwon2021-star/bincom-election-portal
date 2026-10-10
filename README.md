@@ -8,22 +8,25 @@ A clean and user-friendly web portal built with Node.js and Express to view, cal
 
 ### 1. View Results for Any Polling Unit (`/polling-unit`)
 * **Step-by-Step Search:** Pick a Local Government Area, pick a Ward, and select a Polling Unit. The options update automatically so you find the exact voting center easily.
-* **Clear Results Display:** Shows the voting location name, unit number, landmark description, and the presiding officer in charge.
+* **Instant Typeahead Search:** Type any school, street, or unit code to find and jump to any polling unit instantly.
+* **Clear Results Display:** Shows the voting location name, unit number, landmark description, accredited agent, and presiding officer.
 * **Party Breakdown:** Shows how many votes each political party received, along with their percentage share of the total vote.
 * **Visual Charts:** Displays a colorful bar chart showing the performance of each party at a glance.
+* **One-Click CSV Export:** Download an official spreadsheet of the polling unit results in one click.
 * **Quick Shortcuts:** Helpful buttons let you jump straight to active voting centers in one click.
 
 ### 2. View Total Results for Any Local Government (`/lga-total`)
 * **Accurate Vote Sums:** Directly calculates total votes by adding up results from all reporting polling units in the selected Local Government Area.
 * **Clear Council Summary:** Displays total votes cast, how many voting centers have reported so far, and the leading party.
 * **Audit and Comparison Table:** Compares the calculated polling unit total against the announced local government result side-by-side, making it easy to spot any differences.
-* **Print Friendly:** Includes a simple button to print a clean paper copy of the results sheet.
+* **Export and Print:** Download an official collation spreadsheet or print a clean paper results sheet.
 
 ### 3. Enter New Results for a Polling Unit (`/new-polling-unit`)
 * **Simple Form:** Fill in the Local Government, Ward, polling unit name, and landmark description.
 * **All Parties Included:** Provides input boxes for all registered political parties (PDP, DPP, ACN, PPA, CDC, JP, ANPP, LABOUR, CPP).
 * **Live Vote Counter:** Automatically adds up the total number of votes on the screen as you type in scores.
-* **Safe Saving:** Stores the new polling unit and all party scores directly into the database.
+* **Accredited Agent Registration:** Optional fields to record the agent name, phone number, and email into the official records.
+* **Safe Saving:** Stores the new polling unit, agent details, and all party scores directly into the database.
 
 ### 4. Day and Night Mode (Light / Dark Theme)
 * Easily switch between light mode and dark mode using the sun/moon button in the top navigation bar.
