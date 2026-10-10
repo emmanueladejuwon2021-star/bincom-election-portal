@@ -122,6 +122,15 @@ router.get('/polling-unit', async (req, res) => {
       }
     }
 
+    // Query accredited agent from agentname table for selected PU
+    let agent = null;
+    if (initialPuId) {
+      agent = await db.get(
+        'SELECT firstname, lastname, email, phone FROM agentname WHERE pollingunit_uniqueid = ? LIMIT 1',
+        [initialPuId]
+      );
+    }
+
     // List of PUs that already have announced results for quick jumping
     const pusWithResults = await db.query(
       `SELECT DISTINCT 
@@ -143,7 +152,8 @@ router.get('/polling-unit', async (req, res) => {
       puResults,
       totalVotes,
       pusWithResults,
-      currentPuId: initialPuId
+      currentPuId: initialPuId,
+      agent
     });
   } catch (err) {
     console.error('Error on polling-unit page:', err);
@@ -353,8 +363,9 @@ router.post('/new-polling-unit', async (req, res) => {
     let insertedScoresCount = 0;
 
     for (const p of parties) {
-      const partyKey = `score_${p.partyid}`;
-      const rawScore = req.body[partyKey];
+      const rawScore = req.body[`party_${p.partyid}`] !== undefined 
+        ? req.body[`party_${p.partyid}`] 
+        : req.body[`score_${p.partyid}`];
       const score = rawScore !== undefined && rawScore !== '' ? parseInt(rawScore, 10) : 0;
 
       await db.run(
@@ -376,6 +387,27 @@ router.post('/new-polling-unit', async (req, res) => {
         ]
       );
       insertedScoresCount++;
+    }
+
+    // 3. Optional: Insert Accredited Agent into agentname table if provided
+    const { agent_firstname, agent_lastname, agent_phone, agent_email } = req.body;
+    if (agent_firstname && agent_firstname.trim() && agent_lastname && agent_lastname.trim()) {
+      await db.run(
+        `INSERT INTO agentname (
+          firstname,
+          lastname,
+          email,
+          phone,
+          pollingunit_uniqueid
+        ) VALUES (?, ?, ?, ?, ?)`,
+        [
+          agent_firstname.trim(),
+          agent_lastname.trim(),
+          agent_email ? agent_email.trim() : null,
+          agent_phone ? agent_phone.trim() : 'N/A',
+          newPuUniqueId
+        ]
+      );
     }
 
     res.redirect(`/new-polling-unit?success=1&new_id=${newPuUniqueId}`);
