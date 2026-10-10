@@ -31,18 +31,40 @@
     </div>
   </div>
 
-  <!-- Interactive Location Selector Card (Compact) -->
+  <!-- Interactive Location Selector Card (Compact with Instant Search) -->
   <div class="card border-0 shadow-sm mb-3 mb-md-4 rounded-3 bg-white">
-    <div class="card-header bg-white py-2 py-sm-3 border-bottom d-flex align-items-center">
-      <div class="rounded-3 bg-success-subtle text-success p-1 p-sm-2 me-2 d-inline-flex">
-        <i class="bi bi-funnel-fill fs-5"></i>
+    <div class="card-header bg-white py-2 py-sm-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="rounded-3 bg-success-subtle text-success p-1 p-sm-2 me-2 d-inline-flex">
+          <i class="bi bi-funnel-fill fs-5"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">Find Voting Center</h5>
+          <div class="text-muted small">Search directly or use the cascading dropdown filter</div>
+        </div>
       </div>
-      <div>
-        <h5 class="fw-bold mb-0 text-dark">Find Voting Center</h5>
-        <div class="text-muted small">Filter by Local Government, Ward, and Polling Unit</div>
-      </div>
+      <span class="badge bg-light text-muted border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+        272 Units
+      </span>
     </div>
     <div class="card-body p-2 p-sm-3">
+
+      <!-- ⚡ Top Feature: Instant Autocomplete Search Bar -->
+      <div class="position-relative mb-3">
+        <label for="globalPuSearch" class="form-label fw-bold small text-muted text-uppercase mb-1" style="font-size: 0.72rem;">
+          <i class="bi bi-search text-success me-1"></i> Quick Search Any Unit (by School, Landmark, Code, or ID)
+        </label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+          <input type="text" id="globalPuSearch" class="form-control border-start-0 py-1 py-sm-2" 
+                 placeholder="Type school, landmark, or code (e.g. Primary, Market, DT, 8)..." autocomplete="off">
+          <button id="btnClearSearch" class="btn btn-outline-secondary d-none" type="button"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <!-- Live Autocomplete Suggestion Dropdown -->
+        <div id="puSearchResults" class="list-group position-absolute w-100 shadow-lg rounded-3 mt-1 d-none" 
+             style="z-index: 1050; max-height: 280px; overflow-y: auto;"></div>
+      </div>
+
       <div class="row g-2 g-sm-3">
         <!-- 1. Select LGA -->
         <div class="col-md-4">
@@ -137,11 +159,21 @@
             <p class="text-muted small mb-0" style="font-size: 0.75rem;">
               <i class="bi bi-info-circle me-1"></i>
               <%= selectedPU.polling_unit_description || 'Designated voting location' %>
+              <% if (selectedPU.lat && selectedPU.long) { %>
+                &bull; <i class="bi bi-geo-alt"></i> Coordinates: <%= selectedPU.lat %>, <%= selectedPU.long %>
+              <% } %>
             </p>
           </div>
 
-          <div class="text-sm-end">
-            <div class="p-2 bg-white rounded-3 border shadow-xs d-inline-block text-center" style="min-width: 130px;">
+          <div class="text-sm-end d-flex align-items-center gap-2">
+            <!-- ⚡ Top Feature: One-Click CSV Export Button -->
+            <% if (puResults && puResults.length > 0) { %>
+              <button id="btnExportPuCsv" class="btn btn-sm btn-outline-success fw-bold px-2.5 py-1 rounded-2 shadow-xs" title="Export as CSV">
+                <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export CSV
+              </button>
+            <% } %>
+
+            <div class="p-2 bg-white rounded-3 border shadow-xs d-inline-block text-center" style="min-width: 120px;">
               <div class="text-muted small text-uppercase fw-bold" style="font-size: 0.65rem;">Total Ballots</div>
               <div class="fs-4 fw-extrabold text-success mb-0">
                 <%= Number(totalVotes).toLocaleString() %>
@@ -176,6 +208,20 @@
           </div>
         </div>
       <% } %>
+
+      <!-- ⚡ Schema Completeness: Accredited Agent Display from agentname table -->
+      <% if (agent) { %>
+        <div class="px-3 py-2 bg-light border-top d-flex flex-wrap align-items-center gap-2" style="font-size: 0.75rem;">
+          <span class="badge bg-secondary">Accredited Agent</span>
+          <span class="fw-bold text-dark"><i class="bi bi-person-fill me-1"></i> <%= agent.firstname %> <%= agent.lastname %></span>
+          <% if (agent.phone && agent.phone !== 'N/A') { %>
+            <span class="text-muted">&bull; <i class="bi bi-telephone me-0.5"></i> <%= agent.phone %></span>
+          <% } %>
+          <% if (agent.email) { %>
+            <span class="text-muted">&bull; <i class="bi bi-envelope me-0.5"></i> <%= agent.email %></span>
+          <% } %>
+        </div>
+      <% } %>
     </div>
 
     <% if (puResults && puResults.length > 0) { %>
@@ -197,7 +243,7 @@
             </div>
             <div class="card-body p-0">
               <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0" id="puResultsTable">
                   <thead class="table-light">
                     <tr>
                       <th scope="col" class="ps-2 ps-sm-3" style="width: 28%;">Party</th>
@@ -296,13 +342,13 @@
         <i class="bi bi-geo-alt fs-3"></i>
       </div>
       <h5 class="fw-bold text-dark mb-1">Select a Polling Unit Above</h5>
-      <p class="text-muted small mb-0">Use the cascaded dropdown filter to view certified results.</p>
+      <p class="text-muted small mb-0">Use the cascaded dropdown filter or instant search to view certified results.</p>
     </div>
   <% } %>
 
 </main>
 
-<!-- Chained Dropdown Dynamic Script -->
+<!-- Chained Dropdown, Instant Search, CSV Export, and Chart Script -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const lgaSelect = document.getElementById('selectLga');
@@ -310,7 +356,75 @@
     const puSelect = document.getElementById('selectPu');
     const btnViewPu = document.getElementById('btnViewPu');
 
-    // LGA change -> Load Wards
+    // 1. Instant Search Autocomplete
+    const searchInput = document.getElementById('globalPuSearch');
+    const searchResults = document.getElementById('puSearchResults');
+    const clearBtn = document.getElementById('btnClearSearch');
+    let searchDebounceTimer;
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        clearTimeout(searchDebounceTimer);
+
+        if (clearBtn) {
+          clearBtn.classList.toggle('d-none', query.length === 0);
+        }
+
+        if (query.length < 1) {
+          searchResults.classList.add('d-none');
+          searchResults.innerHTML = '';
+          return;
+        }
+
+        searchDebounceTimer = setTimeout(() => {
+          fetch(`/api/search-polling-units?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(res => {
+              if (res.success && res.data.length > 0) {
+                searchResults.innerHTML = res.data.map(item => `
+                  <a href="/polling-unit?id=${item.uniqueid}" class="list-group-item list-group-item-action py-2 px-3">
+                    <div class="d-flex justify-content-between align-items-center mb-0.5">
+                      <strong class="text-dark small">${item.polling_unit_name}</strong>
+                      ${item.has_results > 0 
+                        ? '<span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.65rem;">Certified Results</span>' 
+                        : '<span class="badge bg-light text-muted border" style="font-size: 0.65rem;">Pending</span>'}
+                    </div>
+                    <div class="text-muted small" style="font-size: 0.72rem;">
+                      <span class="badge bg-light text-dark border px-1 py-0 me-1">${item.lga_name || 'Delta'}</span>
+                      <span>Ward: ${item.ward_name || 'Ward'}</span>
+                      <span class="ms-1">&bull; Code: <code>${item.polling_unit_number || 'N/A'}</code></span>
+                    </div>
+                  </a>
+                `).join('');
+                searchResults.classList.remove('d-none');
+              } else {
+                searchResults.innerHTML = '<div class="list-group-item text-muted small py-2 px-3">No matching polling units found</div>';
+                searchResults.classList.remove('d-none');
+              }
+            })
+            .catch(err => console.error('Search error:', err));
+        }, 220);
+      });
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+          searchInput.value = '';
+          searchResults.classList.add('d-none');
+          clearBtn.classList.add('d-none');
+          searchInput.focus();
+        });
+      }
+
+      // Close search results when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.add('d-none');
+        }
+      });
+    }
+
+    // 2. LGA change -> Load Wards
     if (lgaSelect) {
       lgaSelect.addEventListener('change', function() {
         const lgaId = this.value;
@@ -338,7 +452,7 @@
       });
     }
 
-    // Ward change -> Load Polling Units
+    // 3. Ward change -> Load Polling Units
     if (wardSelect) {
       wardSelect.addEventListener('change', function() {
         const wardId = this.value;
@@ -364,7 +478,7 @@
       });
     }
 
-    // Navigate to selected Polling Unit
+    // 4. Navigate to selected Polling Unit
     function navigateToPU() {
       const puId = puSelect.value;
       if (puId) {
@@ -379,7 +493,49 @@
       puSelect.addEventListener('change', navigateToPU);
     }
 
-    // Chart.js initialization
+    // 5. One-Click CSV Export Generator
+    const btnExportPuCsv = document.getElementById('btnExportPuCsv');
+    if (btnExportPuCsv) {
+      btnExportPuCsv.addEventListener('click', function() {
+        <% if (selectedPU && puResults && puResults.length > 0) { %>
+          const puName = <%- JSON.stringify(selectedPU.polling_unit_name) %>;
+          const puCode = <%- JSON.stringify(selectedPU.polling_unit_number || 'N/A') %>;
+          const lgaName = <%- JSON.stringify(selectedPU.lga_name || 'Delta') %>;
+          const wardName = <%- JSON.stringify(selectedPU.ward_name || '') %>;
+          const puId = <%- JSON.stringify(selectedPU.uniqueid) %>;
+          const total = <%- JSON.stringify(totalVotes) %>;
+          const results = <%- JSON.stringify(puResults) %>;
+
+          let csv = 'DELTA STATE OFFICIAL ELECTION RESULTS\n';
+          csv += `Polling Unit:,"${puName}"\n`;
+          csv += `Unit Code:,${puCode}\n`;
+          csv += `Unit ID:,${puId}\n`;
+          csv += `Local Government:,${lgaName}\n`;
+          csv += `Ward:,${wardName}\n`;
+          csv += `Total Certified Ballots:,${total}\n\n`;
+          csv += 'Rank,Party,Votes Counted,Vote Share (%),Status\n';
+
+          results.forEach((r, idx) => {
+            const pct = total > 0 ? ((r.party_score / total) * 100).toFixed(2) : 0;
+            const status = idx === 0 ? 'Winner' : 'Contested';
+            csv += `${idx + 1},${r.party_abbreviation},${r.party_score},${pct}%,${status}\n`;
+          });
+
+          csv += `TOTAL,,${total},100.00%,Certified\n`;
+
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.setAttribute('href', url);
+          link.setAttribute('download', `polling_unit_${puId}_results.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        <% } %>
+      });
+    }
+
+    // 6. Chart.js initialization
     <% if (selectedPU && puResults && puResults.length > 0) { %>
       const ctx = document.getElementById('puChart').getContext('2d');
       const partyLabels = <%- JSON.stringify(puResults.map(r => r.party_abbreviation)) %>;
