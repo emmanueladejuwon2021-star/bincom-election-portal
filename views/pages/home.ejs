@@ -396,6 +396,7 @@
             data: votes,
             backgroundColor: palette.slice(0, labels.length),
             borderWidth: 2,
+            borderColor: document.documentElement.getAttribute('data-bs-theme') === 'dark' ? '#1e293b' : '#ffffff',
             hoverOffset: 4
           }]
         },
