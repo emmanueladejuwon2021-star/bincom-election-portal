@@ -81,7 +81,7 @@
           <div class="text-truncate">
             <div class="text-muted kpi-label fw-medium text-truncate">Total Votes</div>
             <div class="kpi-value fw-bold text-dark text-truncate"><%= Number(stats.totalVotes || 0).toLocaleString() %></div>
-            <div class="kpi-sub text-success fw-semibold text-truncate">Grassroots ballots</div>
+            <div class="kpi-sub text-success fw-semibold text-truncate">Verified votes</div>
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@
             <i class="bi bi-geo-alt-fill fs-5"></i>
           </div>
           <div class="text-truncate">
-            <div class="text-muted kpi-label fw-medium text-truncate">Reporting PUs</div>
+            <div class="text-muted kpi-label fw-medium text-truncate">Reporting Units</div>
             <div class="kpi-value fw-bold text-dark text-truncate"><%= stats.reportingPUs %> / <%= stats.pollingUnits %></div>
             <div class="kpi-sub text-muted text-truncate">
               <%= stats.pollingUnits > 0 ? ((stats.reportingPUs / stats.pollingUnits) * 100).toFixed(0) : 0 %>% reporting
@@ -150,7 +150,7 @@
               <i class="bi bi-bar-chart-line-fill text-success me-1"></i>
               Statewide Party Standings
             </h5>
-            <div class="text-muted small d-none d-sm-block">Aggregated from verified polling unit ballot returns</div>
+            <div class="text-muted small d-none d-sm-block">Total votes calculated from verified polling unit returns</div>
           </div>
           <div class="d-flex align-items-center gap-1.5">
             <button id="btnExportStateCsv" class="btn btn-sm btn-outline-success py-0.5 px-2 rounded-2" style="font-size: 0.75rem;" title="Download Statewide CSV">
@@ -167,8 +167,8 @@
               <thead class="table-light">
                 <tr>
                   <th scope="col" class="ps-2 ps-sm-3" style="width: 28%;">Party</th>
-                  <th scope="col" style="width: 28%;">Ballots</th>
-                  <th scope="col" style="width: 44%;">Vote Share (%)</th>
+                  <th scope="col" style="width: 28%;">Votes</th>
+                  <th scope="col" style="width: 44%;">Percentage (%)</th>
                   <th scope="col" class="d-none d-sm-table-cell text-end pe-3">Standing</th>
                 </tr>
               </thead>
@@ -304,9 +304,9 @@
     <div class="card-header bg-white py-2 py-sm-3 border-bottom d-flex justify-content-between align-items-center">
       <div>
         <h5 class="card-title fw-bold mb-0">
-          <i class="bi bi-clock-history text-success me-1"></i> Recently Reported Polling Units
+          <i class="bi bi-clock-history text-success me-1"></i> Recently Added Voting Centers
         </h5>
-        <div class="text-muted small d-none d-sm-block">Latest certified unit-level ballot returns received</div>
+        <div class="text-muted small d-none d-sm-block">Latest voting center results added to the system</div>
       </div>
       <a href="/polling-unit" class="btn btn-sm btn-outline-success py-1 px-2" style="font-size: 0.78rem;">Browse All &rarr;</a>
     </div>
