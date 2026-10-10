@@ -5,35 +5,36 @@
   --accent-gold: #ffc107;
 }
 
-body {
+html, body {
   font-family: var(--primary-font);
   background-color: #f8fafc !important;
   color: #1e293b;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* Navbar */
 .navbar {
   border-bottom: 2px solid #157347;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
 }
 
 .navbar-brand span {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   letter-spacing: -0.01em;
 }
 
 /* Card Styling */
 .card {
-  border-radius: 14px;
+  border-radius: 12px;
   border-color: #e2e8f0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .hover-lift {
@@ -41,58 +42,69 @@ body {
 }
 
 .hover-lift:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06) !important;
   border-color: #198754 !important;
 }
 
 /* Table Responsive Scrolling & Appearance */
 .table-responsive {
   -webkit-overflow-scrolling: touch;
-  border-radius: 0 0 14px 14px;
+  border-radius: 0 0 12px 12px;
+  overflow-x: auto;
+}
+
+.table {
+  margin-bottom: 0;
+  vertical-align: middle;
 }
 
 .table th {
   font-weight: 600;
   text-transform: uppercase;
   font-size: 0.75rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: #64748b;
-  white-space: nowrap;
+  background-color: #f8fafc;
 }
 
 .table td {
-  white-space: nowrap;
+  font-size: 0.88rem;
+}
+
+/* Desktop-only nowrap for specific columns */
+@media (min-width: 768px) {
+  .nowrap-md {
+    white-space: nowrap !important;
+  }
 }
 
 /* Scrollbar polish */
-.table-responsive::-webkit-scrollbar {
-  height: 6px;
+.table-responsive::-webkit-scrollbar,
+.lga-grid-scroll::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
 }
-.table-responsive::-webkit-scrollbar-track {
+.table-responsive::-webkit-scrollbar-track,
+.lga-grid-scroll::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
-.table-responsive::-webkit-scrollbar-thumb {
+.table-responsive::-webkit-scrollbar-thumb,
+.lga-grid-scroll::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 999px;
 }
 
 /* Party Input Card */
 .party-input-card {
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   border-color: #e2e8f0;
 }
 
 .party-input-card:focus-within {
   border-color: #198754;
   background-color: #ffffff !important;
-  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15);
-}
-
-/* Form inputs: at least 16px on mobile to avoid iOS Safari zoom */
-.form-control, .form-select {
-  font-size: 1rem;
-  min-height: 44px;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.15);
 }
 
 /* Progress bar */
@@ -100,6 +112,7 @@ body {
   background-color: #e2e8f0;
   border-radius: 9999px;
   overflow: hidden;
+  height: 6px;
 }
 
 .progress-bar {
@@ -109,7 +122,7 @@ body {
 
 .badge {
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .backdrop-blur {
@@ -125,62 +138,166 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
+/* Scrollable LGA directory container to prevent extreme vertical length */
+.lga-grid-scroll {
+  max-height: 360px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
 /* -------------------------------------------------------------
-   RESPONSIVE DESIGN BREAKPOINTS
+   RESPONSIVE DESIGN BREAKPOINTS (MOBILE FIRST COMPACT POLISH)
    ------------------------------------------------------------- */
 
-/* Small Phones (< 576px) */
-@media (max-width: 575.98px) {
-  .display-5 {
-    font-size: 1.85rem !important;
-    line-height: 1.25;
-  }
-  
-  .display-6 {
-    font-size: 1.5rem !important;
-    line-height: 1.3;
+/* Phones & Small Screens (< 768px) */
+@media (max-width: 767.98px) {
+  /* Tight container margins */
+  main.container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 1.5rem !important;
   }
 
-  .lead {
+  /* Compact Hero Banners */
+  .hero-banner {
+    padding: 1.15rem 1rem !important;
+    margin-bottom: 0.85rem !important;
+    border-radius: 12px !important;
+  }
+
+  .hero-banner h1, 
+  .hero-banner .display-5,
+  .hero-banner .display-6 {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 0.4rem !important;
+  }
+
+  .hero-banner p.lead {
+    font-size: 0.82rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Cards & Sections Compactness */
+  .card {
+    border-radius: 10px !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .card-header {
+    padding: 0.65rem 0.85rem !important;
+  }
+
+  .card-header h5 {
     font-size: 0.95rem !important;
   }
 
   .card-body {
-    padding: 1rem !important;
+    padding: 0.75rem !important;
   }
 
-  /* Make buttons full width on small screens when stacked */
-  .btn-sm-block {
-    width: 100%;
+  /* Compact KPI Cards */
+  .kpi-card .card-body {
+    padding: 0.65rem !important;
+  }
+
+  .kpi-card .kpi-icon {
+    padding: 0.5rem !important;
+    margin-right: 0.5rem !important;
+    border-radius: 8px !important;
+  }
+
+  .kpi-card .kpi-icon i {
+    font-size: 1.15rem !important;
+  }
+
+  .kpi-card .kpi-value {
+    font-size: 1.1rem !important;
+  }
+
+  .kpi-card .kpi-label {
+    font-size: 0.72rem !important;
+  }
+
+  .kpi-card .kpi-sub {
+    font-size: 0.68rem !important;
+  }
+
+  /* Compact Tables & Zero Horizontal Overflow */
+  .table th {
+    font-size: 0.7rem !important;
+    padding: 0.45rem 0.35rem !important;
+    white-space: normal !important;
+  }
+
+  .table td {
+    font-size: 0.8rem !important;
+    padding: 0.45rem 0.35rem !important;
+    white-space: normal !important;
+  }
+
+  .table .badge {
+    font-size: 0.72rem !important;
+    padding: 0.2rem 0.4rem !important;
   }
 
   /* Compact quick pills */
   .quick-browse-btn {
-    font-size: 0.75rem !important;
-    padding: 0.25rem 0.5rem !important;
+    font-size: 0.72rem !important;
+    padding: 0.2rem 0.45rem !important;
   }
 
-  /* Reduce hero padding */
-  .hero-banner {
-    padding: 1.5rem 1rem !important;
+  /* Compact Party Input Cards on New Polling Unit Form */
+  .party-input-card {
+    padding: 0.45rem 0.55rem !important;
+  }
+
+  .party-input-card .form-control {
+    font-size: 0.95rem !important;
+    padding: 0.3rem 0.5rem !important;
+    min-height: 38px !important;
+  }
+
+  /* Compact Form Controls */
+  .form-control, .form-select {
+    font-size: 0.92rem !important;
+    min-height: 40px !important;
+  }
+
+  .form-select-lg, .btn-lg {
+    font-size: 0.95rem !important;
+    min-height: 42px !important;
+    padding: 0.45rem 0.75rem !important;
+  }
+
+  /* Charts Max Height on Mobile */
+  canvas {
+    max-height: 200px !important;
   }
 }
 
-/* Medium Devices (Tablets, 576px to 991px) */
-@media (min-width: 576px) and (max-width: 991.98px) {
+/* Medium Devices (Tablets, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
   .display-5 {
-    font-size: 2.25rem !important;
+    font-size: 1.85rem !important;
   }
   
   .display-6 {
-    font-size: 1.8rem !important;
+    font-size: 1.6rem !important;
+  }
+
+  .hero-banner {
+    padding: 2rem !important;
   }
 }
 
 /* Large Screens (Desktops 992px+) */
 @media (min-width: 992px) {
   .hero-banner {
-    padding: 3rem !important;
+    padding: 2.75rem !important;
   }
 }
 
