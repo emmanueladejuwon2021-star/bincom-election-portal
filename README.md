@@ -10,6 +10,10 @@
 
 A modern, citizen-focused election monitoring portal built to provide open, transparent, and verified ballot returns across all 25 Local Government Areas of Delta State.
 
+<p align="center">
+  <img src="public/img/dashboard-preview.png" alt="Delta State Election Results Portal Preview" width="100%" />
+</p>
+
 ---
 
 ## Live Deployment
