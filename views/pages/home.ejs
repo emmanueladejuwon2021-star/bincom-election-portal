@@ -152,9 +152,14 @@
             </h5>
             <div class="text-muted small d-none d-sm-block">Aggregated from verified polling unit ballot returns</div>
           </div>
-          <span class="badge bg-success-subtle text-success border border-success-subtle">
-            <%= partyStandings.length %> Parties
-          </span>
+          <div class="d-flex align-items-center gap-1.5">
+            <button id="btnExportStateCsv" class="btn btn-sm btn-outline-success py-0.5 px-2 rounded-2" style="font-size: 0.75rem;" title="Download Statewide CSV">
+              <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export CSV
+            </button>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">
+              <%= partyStandings.length %> Parties
+            </span>
+          </div>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
@@ -421,6 +426,37 @@
             }
           }
         }
+      });
+    }
+
+    // 3. Statewide CSV Export Generator
+    const btnExportStateCsv = document.getElementById('btnExportStateCsv');
+    if (btnExportStateCsv) {
+      btnExportStateCsv.addEventListener('click', function() {
+        const standings = <%- JSON.stringify(partyStandings) %>;
+        const totalVotes = <%- JSON.stringify(totalStatewideVotes) %>;
+
+        let csv = 'DELTA STATE ELECTION STANDINGS SUMMARY\n';
+        csv += `Total Statewide Ballots:,${totalVotes}\n`;
+        csv += `Date Generated:,${new Date().toLocaleDateString()}\n\n`;
+        csv += 'Rank,Party,Total Ballots,Vote Share (%),Status\n';
+
+        standings.forEach((p, idx) => {
+          const pct = totalVotes > 0 ? ((p.total_votes / totalVotes) * 100).toFixed(2) : 0;
+          const status = idx === 0 ? 'Leading' : 'Contested';
+          csv += `${idx + 1},${p.party_abbreviation},${p.total_votes},${pct}%,${status}\n`;
+        });
+
+        csv += `TOTAL,,${totalVotes},100.00%,Verified\n`;
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'delta_state_party_standings.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       });
     }
   });
