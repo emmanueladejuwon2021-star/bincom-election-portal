@@ -24,8 +24,11 @@
       </div>
 
       <div class="col-lg-4 text-lg-end mt-2 mt-lg-0">
+        <button id="btnExportLgaCsv" class="btn btn-light text-success fw-bold px-3 py-1 py-sm-2 shadow-sm me-1" style="font-size: 0.85rem;" title="Download Official Collation CSV">
+          <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export CSV
+        </button>
         <button onclick="window.print()" class="btn btn-warning text-dark fw-bold px-3 py-1 py-sm-2 shadow-sm" style="font-size: 0.85rem;">
-          <i class="bi bi-printer-fill me-1"></i> Print Collation Sheet
+          <i class="bi bi-printer-fill me-1"></i> Print
         </button>
       </div>
     </div>
@@ -340,6 +343,49 @@
 <% if (selectedLga && summedResults.length > 0) { %>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // CSV Export Generator
+    const btnExportLgaCsv = document.getElementById('btnExportLgaCsv');
+    if (btnExportLgaCsv) {
+      btnExportLgaCsv.addEventListener('click', function() {
+        <% if (selectedLga && (summedResults.length > 0 || comparison.length > 0)) { %>
+          const lgaName = <%- JSON.stringify(selectedLga.lga_name) %>;
+          const lgaId = <%- JSON.stringify(selectedLga.lga_id) %>;
+          const totalPu = <%- JSON.stringify(totalPuVotes) %>;
+          const totalAnn = <%- JSON.stringify(totalAnnouncedVotes) %>;
+          const summed = <%- JSON.stringify(summedResults) %>;
+          const comp = <%- JSON.stringify(comparison) %>;
+
+          let csv = 'DELTA STATE LOCAL GOVERNMENT COLLATION SHEET\n';
+          csv += `Local Government:,"${lgaName}"\n`;
+          csv += `LGA ID:,${lgaId}\n`;
+          csv += `Total Grassroots PU Votes:,${totalPu}\n`;
+          csv += `Total Announced LGA Votes:,${totalAnn}\n\n`;
+
+          csv += 'SECTION 1: AGGREGATED POLLING UNIT TOTALS\n';
+          csv += 'Rank,Party,Summed Ballots,Council Share (%)\n';
+          summed.forEach((s, i) => {
+            const pct = totalPu > 0 ? ((s.total_score / totalPu) * 100).toFixed(2) : 0;
+            csv += `${i + 1},${s.party_abbreviation},${s.total_score},${pct}%\n`;
+          });
+
+          csv += '\nSECTION 2: COLLATION RECONCILIATION & AUDIT\n';
+          csv += 'Party,Field PU Sum,Announced LGA Total,Variance,Audit Status\n';
+          comp.forEach(c => {
+            csv += `${c.party},${c.summed},${c.announced},${c.difference},${c.status}\n`;
+          });
+
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.setAttribute('href', url);
+          link.setAttribute('download', `lga_collation_${lgaName.toLowerCase().replace(/\s+/g, '_')}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        <% } %>
+      });
+    }
+
     const ctx = document.getElementById('lgaChart');
     if (ctx) {
       const labels = <%- JSON.stringify(summedResults.map(r => r.party_abbreviation)) %>;
