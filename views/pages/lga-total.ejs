@@ -104,9 +104,9 @@
       <div class="col-6 col-lg-3">
         <div class="card border-0 shadow-sm bg-white rounded-3 h-100 kpi-card">
           <div class="card-body">
-            <div class="text-muted kpi-label fw-medium text-uppercase">Field PU Ballots</div>
+            <div class="text-muted kpi-label fw-medium text-uppercase">Polling Units Total</div>
             <div class="kpi-value fw-extrabold text-success text-truncate mb-1"><%= Number(totalPuVotes).toLocaleString() %></div>
-            <div class="kpi-sub text-muted">Summed from PUs</div>
+            <div class="kpi-sub text-muted">Total from all voting centers</div>
           </div>
         </div>
       </div>
@@ -114,7 +114,7 @@
       <div class="col-6 col-lg-3">
         <div class="card border-0 shadow-sm bg-white rounded-3 h-100 kpi-card">
           <div class="card-body">
-            <div class="text-muted kpi-label fw-medium text-uppercase">Reporting Centers</div>
+            <div class="text-muted kpi-label fw-medium text-uppercase">Voting Centers Reporting</div>
             <div class="kpi-value fw-extrabold text-primary text-truncate mb-1"><%= reportingPUs %> / <%= totalPUs %></div>
             <div class="d-flex align-items-center">
               <span class="kpi-sub text-muted me-1"><%= totalPUs > 0 ? ((reportingPUs / totalPUs) * 100).toFixed(0) : 0 %>%</span>
@@ -156,9 +156,9 @@
           <div class="card-header bg-white py-2 py-sm-3 border-bottom d-flex justify-content-between align-items-center">
             <div>
               <h5 class="fw-bold mb-0 text-dark">
-                <i class="bi bi-calculator-fill text-success me-1"></i> Summed Polling Unit Totals
+                <i class="bi bi-calculator-fill text-success me-1"></i> Polling Unit Total Votes
               </h5>
-              <div class="text-muted small d-none d-sm-block">Calculated by summing all certified field returns</div>
+              <div class="text-muted small d-none d-sm-block">Total votes calculated from all voting centers in this LGA</div>
             </div>
             <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
               <%= summedResults.length %> Parties
@@ -171,8 +171,8 @@
                   <thead class="table-light">
                     <tr>
                       <th scope="col" class="ps-2 ps-sm-3" style="width: 28%;">Party</th>
-                      <th scope="col" style="width: 28%;">Ballots</th>
-                      <th scope="col" style="width: 44%;">Council Share (%)</th>
+                      <th scope="col" style="width: 28%;">Votes</th>
+                      <th scope="col" style="width: 44%;">Percentage (%)</th>
                       <th scope="col" class="d-none d-sm-table-cell text-end pe-3">Leader</th>
                     </tr>
                   </thead>
@@ -239,7 +239,7 @@
         <div class="card border-0 shadow-sm rounded-3 h-100 bg-white">
           <div class="card-header bg-white py-2 py-sm-3 border-bottom">
             <h5 class="fw-bold mb-0 text-dark">
-              <i class="bi bi-pie-chart-fill text-primary me-1"></i> Council Vote Distribution
+              <i class="bi bi-pie-chart-fill text-primary me-1"></i> Local Government Vote Distribution
             </h5>
           </div>
           <div class="card-body d-flex flex-column align-items-center justify-content-center p-2 p-sm-3" style="min-height: 220px;">
@@ -253,18 +253,18 @@
       </div>
     </div>
 
-    <!-- Collation Centre Reconciliation & Cross-Audit Section (Compact & Responsive) -->
+    <!-- Results Verification & Cross-Check Section (Compact & Responsive) -->
     <div class="card border-0 shadow-sm rounded-3 bg-white mb-3 mb-md-4">
       <div class="card-header bg-white py-2 py-sm-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-1">
         <div>
           <h5 class="fw-bold mb-0 text-dark">
             <i class="bi bi-shield-check text-success me-1"></i>
-            Collation Reconciliation & Cross-Audit
+            Results Verification Check
           </h5>
-          <div class="text-muted small">Cross-verifying grassroots unit sums against collation announcements</div>
+          <div class="text-muted small">Comparing polling unit ballot totals with official local government announcements</div>
         </div>
         <span class="badge bg-light text-dark border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
-          Integrity Audit
+          Verification Check
         </span>
       </div>
       <div class="card-body p-0">
@@ -273,9 +273,9 @@
             <thead class="table-light">
               <tr>
                 <th scope="col" class="ps-2 ps-sm-3" style="width: 20%;">Party</th>
-                <th scope="col" style="width: 20%;">PU Sum</th>
-                <th scope="col" style="width: 20%;">Announced</th>
-                <th scope="col" style="width: 20%;">Diff</th>
+                <th scope="col" style="width: 20%;">Voting Centers Total</th>
+                <th scope="col" style="width: 20%;">Announced Total</th>
+                <th scope="col" style="width: 20%;">Difference</th>
                 <th scope="col" class="text-end pe-2 pe-sm-3" style="width: 20%;">Status</th>
               </tr>
             </thead>
@@ -298,19 +298,19 @@
                     <td class="text-end pe-2 pe-sm-3">
                       <% if (c.status === 'Match') { %>
                         <span class="badge bg-success-subtle text-success border border-success-subtle px-1 py-0.5">
-                          <i class="bi bi-check-circle-fill me-0.5"></i> Match
+                          <i class="bi bi-check-circle-fill me-0.5"></i> Numbers Match
                         </span>
                       <% } else if (c.status === 'Announced Only') { %>
                         <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-1 py-0.5">
-                          Announced
+                          Announced Only
                         </span>
                       <% } else if (c.status === 'PU Reports Only') { %>
                         <span class="badge bg-info-subtle text-info border border-info-subtle px-1 py-0.5">
-                          PU Only
+                          Voting Centers Only
                         </span>
                       <% } else { %>
                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-1 py-0.5">
-                          Diff
+                          Difference Found
                         </span>
                       <% } %>
                     </td>
@@ -328,7 +328,7 @@
                 <td class="text-success"><%= Number(totalPuVotes).toLocaleString() %></td>
                 <td class="text-primary"><%= Number(totalAnnouncedVotes).toLocaleString() %></td>
                 <td><%= (totalPuVotes - totalAnnouncedVotes) > 0 ? '+' : '' %><%= Number(totalPuVotes - totalAnnouncedVotes).toLocaleString() %></td>
-                <td class="text-end pe-2 pe-sm-3">Audit Complete</td>
+                <td class="text-end pe-2 pe-sm-3">Verification Complete</td>
               </tr>
             </tfoot>
           </table>
